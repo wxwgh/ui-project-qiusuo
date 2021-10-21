@@ -1,0 +1,175 @@
+//引入自定义通用方法脚本
+import myCommon from '../../assets/plugins/common.js'
+const rightlayer_store = {
+	state: {
+		layers_tree_config:[
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"水力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某河流",
+						is_leaf:true,
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某湖泊",
+						is_leaf:true,
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+			{
+				//节点唯一标识
+				id:myCommon.UUID(),
+				//节点描述
+				label:"电力资源",
+				children:[
+					{
+						id:myCommon.UUID(),
+						label:"某某电表箱",
+					},
+					{
+						id:myCommon.UUID(),
+						label:"某某电闸"
+					}
+				]
+			},
+		],
+		switch_value:false,
+	},
+	actions: {},
+	mutations: {
+		//删除图层
+		// delete_rightlayer_config: function(state, post){
+		// 	for(let i=0;i<state.layers_config.length;i++){
+		// 		if(post.id===state.layers_config[i].id){
+		// 			state.layers_config.splice(i,1);
+		// 		}
+		// 	}
+		// },
+	},
+	getters:{
+		get_leftlayer_tree_config: (state) => {
+			return state.layers_tree_config;
+		},
+		get_switch_value:function(state){
+			return state.switch_value;
+		}
+	}
+}
+export default rightlayer_store
