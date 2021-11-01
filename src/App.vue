@@ -29,16 +29,14 @@
 			};
 		},
 		mounted: function() {
-		},
-		// 页面创建时
-		created: function() {
-		},
-		computed: {
-			// get_loading: function() {
-			// 	return this.$store.state.loading;
-			// }
+			//更新左侧图层树配置
+			this.init_layers_tree();
 		},
 		methods: {
+			init_layers_tree(){
+				//触发异步函数 初始化图层树配置
+				this.$store.dispatch("init_layers_tree");
+			}
 		}
 	};
 </script>

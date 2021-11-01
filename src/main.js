@@ -13,6 +13,7 @@ Vue.use(ElementUI);
 import $ from 'jquery';
 //引入leaflet
 import L from 'leaflet';
+import '@supermap/iclient-leaflet'
 import 'leaflet/dist/leaflet.css';
 
 //加载自定义脚本

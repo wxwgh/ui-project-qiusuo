@@ -12,12 +12,18 @@
 			<div>
 				<el-tree :data="get_configs" :props="default_props" >
 					<span class="custom-tree-node" slot-scope="{node,data}" >
-						<el-tooltip :content="data.label" placement="right-end" effect="light">
+						<!-- <el-tooltip :content="data.node_name" placement="right-end" effect="light" >
 							<span class="layer_label">
-								<span>{{node.label}}</span>
+								<span>{{data.node_name}}</span>
 							</span>
 						</el-tooltip>
-						<el-switch v-model="get_switch_value" v-if="data.is_leaf">
+						<span v-else>
+							<span>{{data.node_name}}</span>
+						</span> -->
+						<span>
+							<span>{{data.node_name}}</span>
+						</span>
+						<el-switch v-model="data.show_flag" v-if="data.is_leaf" @change="layer_offon(data)">
 						</el-switch>
 					</span>
 				</el-tree>
@@ -33,7 +39,7 @@
 			return {
 				default_props:{
 					children: 'children',
-				    label: 'label'
+				    label: 'node_name'
 				}
 			}
 		},
@@ -42,16 +48,26 @@
 			get_configs: function(){
 				return this.$store.getters.get_leftlayer_tree_config;
 			},
-			get_switch_value: function(){
-				return this.$store.getters.get_switch_value;
-			},
 		},
 		methods: {
-			downLoadClick(post) {
-				var map = this.myCommon.getMap();
-				this.myCommon.unbindMapEvent(map);
-				this.myCommon.switchMouseStyle(false, map);
-				this.myCommon.clearOperation();
+			layer_offon(post) {
+				let layer_group = this.$store.getters.get_layer_group;
+				let map = this.$store.getters.map;
+				if(post.show_flag){
+					//添加图层
+					this.$store.commit("update_layer_index");
+					let layer_index = this.$store.getters.get_layer_index;
+					let layer = L.supermap.tiledMapLayer(post.url,{ transparent: true, zIndex: layer_index,opacity:0.7}).addTo(map);
+					post.layer = layer;
+					post.layer_index=layer_index;
+					//添加至右侧图层样式控制器
+					this.$store.commit("add_rightlayer_config",post);
+				}else{
+					//删除图层
+					this.$store.commit("delete_rightlayer_config",post);
+					//删除左侧图层(关闭开关,删除图层)
+					this.$store.commit("delete_leftlayer_config",post);
+				}
 			},
 		},
 	}
@@ -102,6 +118,9 @@
 		height: 45px!important;
 	}
 	.custom-tree-node{
+		flex: 1;
+		font-size: 15px;
+		padding-right: 3%;
 		@display_row_between();
 	}
 	.layer_label{

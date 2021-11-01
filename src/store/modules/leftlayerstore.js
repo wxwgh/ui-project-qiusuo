@@ -1,167 +1,46 @@
 //引入自定义通用方法脚本
-import myCommon from '../../assets/plugins/common.js'
+import myCommon from '../../assets/plugins/common.js';
+//引入axios
+import axios from 'axios';
 const rightlayer_store = {
 	state: {
-		layers_tree_config:[
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"水力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某河流",
-						is_leaf:true,
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某湖泊",
-						is_leaf:true,
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-			{
-				//节点唯一标识
-				id:myCommon.UUID(),
-				//节点描述
-				label:"电力资源",
-				children:[
-					{
-						id:myCommon.UUID(),
-						label:"某某电表箱",
-					},
-					{
-						id:myCommon.UUID(),
-						label:"某某电闸"
-					}
-				]
-			},
-		],
-		switch_value:false,
+		config_url:"http://localhost:15000/layertree_service/get_layertree_config",
+		layers_tree_config:[],
+		layer_index:0,
 	},
-	actions: {},
+	actions: {
+		//初始化图层树配置
+		init_layers_tree:function(context){
+			axios({
+			    method: 'get',
+			    url: context.getters.get_leftlayer_url
+			}).then(function (result) {
+				console.log(result);
+				context.commit("init_layers_tree",result.data.children);
+			}).catch(function(error){
+				console.log(error);
+			})
+		},
+		
+	},
 	mutations: {
-		//删除图层
-		// delete_rightlayer_config: function(state, post){
-		// 	for(let i=0;i<state.layers_config.length;i++){
-		// 		if(post.id===state.layers_config[i].id){
-		// 			state.layers_config.splice(i,1);
-		// 		}
-		// 	}
-		// },
+		//设置switch值
+		set_switch_value:function(state,value){
+			state.switch_value=value;
+		},
+		//初始化图层树配置
+		init_layers_tree:function(state,value){
+			state.layers_tree_config=value;
+		},
+		//++ layer_index
+		update_layer_index:function(state){
+			state.layer_index+=1;
+		},
+		delete_leftlayer_config:function(state,post){
+			post.layer.remove();
+			post.layer="";
+			post.show_flag=false;
+		}
 	},
 	getters:{
 		get_leftlayer_tree_config: (state) => {
@@ -169,6 +48,12 @@ const rightlayer_store = {
 		},
 		get_switch_value:function(state){
 			return state.switch_value;
+		},
+		get_leftlayer_url:function(state){
+			return state.config_url;
+		},
+		get_layer_index:function(state){
+			return state.layer_index;
 		}
 	}
 }

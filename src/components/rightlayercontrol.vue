@@ -10,7 +10,7 @@
 			</div>
 			<!-- 图层样式控制器 内容主体 -->
 			<div class="rightlayer_main">
-				<draggable tag="div" v-model="get_layers" v-bind="dragOptions">
+				<draggable tag="div" v-model="get_layers" v-bind="dragOptions" @end="leftlayer_end()">
 					<transition-group name="rightlayer-list" tag="div" enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
 						<div v-for="post in get_layers" 
 							:key="post.id"
@@ -18,9 +18,15 @@
 							<div class="main_header">
 								<div class="main_header_title">
 									<span class="iconfont icon-ic_satellite_px"></span>
-									<span>{{post.name}}</span>
+									<span>{{post.node_name}}</span>
 								</div>
 								<div class="main_header_button">
+									<div v-if="post.opacity_flag">
+										<span class="el-icon-close" @click="index_close(post)"></span>
+									</div>
+									<div v-else>
+										<span class="el-icon-check" @click="index_check(post)"></span>
+									</div>
 									<div>
 										<span class="el-icon-top" @click="index_up(post)"></span>
 									</div>
@@ -37,7 +43,7 @@
 								<div>
 									<span class="el-icon-document"></span>
 									<span>透明度：</span>
-									<el-slider v-model="post.opacity" input-size="mini"></el-slider>
+									<el-slider v-model="post.opacity" input-size="mini" @input="rightlayer_input()"></el-slider>
 								</div>
 							</div>
 						</div>
@@ -83,6 +89,12 @@
 			},
 		},
 		methods: {
+			//滑块移动事件
+			rightlayer_input(value){
+				//更新图层透明度
+				this.$store.commit("update_rightlayer_opacity");
+				
+			},
 			//图层上移
 			index_up(post){
 				//调用图层上移方法
@@ -95,18 +107,35 @@
 			},
 			//图层删除(实际是隐藏图层,并将左侧图层树 控制显隐开关 置为 关闭)
 			index_delete(post){
+				var $this = this;
 				this.$confirm('图层删除后需重新添加, 是否继续?', '删除图层', {
 				    confirmButtonText: '确定',
 				    cancelButtonText: '取消',
 				    type: 'warning'
 				}).then(() => {
-					//删除图层
-					this.$store.commit("delete_rightlayer_config",post);
+					//删除右侧图层
+					$this.$store.commit("delete_rightlayer_config",post);
+					//删除左侧图层(关闭开关,删除图层)
+					$this.$store.commit("delete_leftlayer_config",post);
+					
 				}).catch(() => {
 				});
-				
-				//开关置为关闭
 			},
+			//拖拽完成事件
+			leftlayer_end(){
+				//重新排列图层
+				this.$store.commit("index_rightlayer_config");
+			},
+			//右侧图层选中
+			index_check(post){
+				post.opacity=100;
+				post.opacity_flag=true;
+			},
+			//右侧图层取消选中
+			index_close(post){
+				post.opacity=0;
+				post.opacity_flag=false;
+			}
 		},
 	}
 </script>
@@ -120,6 +149,7 @@
 		right:4%;
 		top:10%;
 		width:350px;
+		height: 80%;
 		max-height:80%;
 		@common_background();
 		@display_column_start();

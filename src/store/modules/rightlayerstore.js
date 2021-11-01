@@ -1,103 +1,28 @@
-function UUID(){
-	function S4() {
-		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
-	}
-				
-	return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4())
-}
 //引入自定义通用方法脚本
 import myCommon from '../../assets/plugins/common.js'
 const rightlayer_store = {
 	state: {
-		layers_config:[
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称1",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			},
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称2",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			},
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称3",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			},
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称4",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			},
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称5",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			},
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称6",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			},
-			{
-				//图层唯一标识
-				id:UUID(),
-				//图层名称
-				name:"图层名称7",
-				// 图层类型
-				index:50,
-				//透明度
-				opacity:70,
-				//来源
-				source:"运维管理系统"
-			}
-		]
+		layers_config:[],
 	},
 	actions: {},
 	mutations: {
+		//更新图层透明度
+		update_rightlayer_opacity(state){
+			for(let i=0;i<state.layers_config.length;i++){
+				state.layers_config[i].layer.setOpacity((state.layers_config[i].opacity/100).toFixed(1));
+			}
+		},
+		//重新排列图层
+		index_rightlayer_config(state){
+			for(let i=0;i<state.layers_config.length;i++){
+				state.layers_config[i].layer_index = state.layers_config.length-i;
+				state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+			}
+		},
+		//添加图层
+		add_rightlayer_config:function(state, post){
+			state.layers_config.unshift(post);
+		},
 		//删除图层
 		delete_rightlayer_config: function(state, post){
 			for(let i=0;i<state.layers_config.length;i++){
@@ -114,8 +39,15 @@ const rightlayer_store = {
 					myCommon.get_message("该图层已在最上层");
 					break;
 				}else if(post.id===state.layers_config[i].id&&i!=0){
+					//交换layer_index
+					let temp_index = post.layer_index;
+					post.layer_index=state.layers_config[i-1].layer_index;
+					state.layers_config[i-1].layer_index=temp_index;
 					state.layers_config.splice(i-1,0,state.layers_config[i]);
 					state.layers_config.splice(i+1,1);
+					for(let i=0;i<state.layers_config.length;i++){
+						state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+					}
 					break;
 				}
 			}
@@ -128,8 +60,15 @@ const rightlayer_store = {
 					myCommon.get_message("该图层已在最下层");
 					break;
 				}else if(post.id===state.layers_config[i].id&&i!=state.layers_config.length-1){
+					//交换layer_index
+					let temp_index = post.layer_index;
+					post.layer_index=state.layers_config[i+1].layer_index;
+					state.layers_config[i+1].layer_index=temp_index;
 					state.layers_config.splice(i,0,state.layers_config[i+1]);
 					state.layers_config.splice(i+2,1);
+					for(let i=0;i<state.layers_config.length;i++){
+						state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+					}
 					break;
 				}
 			}

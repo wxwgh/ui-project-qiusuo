@@ -1,5 +1,6 @@
 import $store from '@/store/index.js';
 import {Message} from 'element-ui'
+
 export default{
 	UUID(){
 		function S4() {

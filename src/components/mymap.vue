@@ -16,10 +16,12 @@
 		},
 		methods: {
 			init_map() {
+				// console.log(this.$UUID());
 				var height = parseInt(window.innerHeight);
 				$("#map").css("height", height);
 				let url = this.$store.getters.map_url;
 				let map = L.map("map", {
+					// crs:L.CRS.EPSG3857,
 					center: [39.550339, 100.114129],
 					zoom: 3,
 					minZoom: 3,
@@ -30,8 +32,11 @@
 					preferCanvas: true
 				});
 				this.$store.commit('set_map',map);
-				let layer = L.tileLayer.chinaProvider(url).addTo(this.$store.state.map_store.map);
+				let layer = L.tileLayer.chinaProvider(url,{ transparent: true,zIndex: 0}).addTo(this.$store.state.map_store.map);
 				this.$store.commit("set_layer",layer);
+				//初始化图层组
+				// let layer_group = L.layerGroup([]).addTo(this.$store.state.map_store.map);
+				// this.$store.commit("init_layer_group",layer_group);
 				window.onresize = function() {
 					var height = parseInt(window.innerHeight);
 					$("#map").css("height", height);
