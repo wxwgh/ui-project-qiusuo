@@ -29,11 +29,15 @@
 					zoomControl: false,
 					attributionControl: false,
 					keyboard: false,
-					preferCanvas: true
+					preferCanvas: true,
+					
 				});
 				this.$store.commit('set_map',map);
 				let layer = L.tileLayer.chinaProvider(url,{ transparent: true,zIndex: 0}).addTo(this.$store.state.map_store.map);
 				this.$store.commit("set_layer",layer);
+				//创建海量marker图层
+				let marker_group=L.massmarkers({}).addTo(map);
+				this.$store.commit("set_marker_group",marker_group);
 				//初始化图层组
 				// let layer_group = L.layerGroup([]).addTo(this.$store.state.map_store.map);
 				// this.$store.commit("init_layer_group",layer_group);

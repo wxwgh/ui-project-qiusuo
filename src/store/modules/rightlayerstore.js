@@ -9,14 +9,27 @@ const rightlayer_store = {
 		//更新图层透明度
 		update_rightlayer_opacity(state){
 			for(let i=0;i<state.layers_config.length;i++){
-				state.layers_config[i].layer.setOpacity((state.layers_config[i].opacity/100).toFixed(1));
+				if(state.layers_config[i].url_type=="vector"){
+					let layers = state.layers_config[i].layer.getLayers();
+					for(let j =0;j<layers.length;j++){
+						layers[j].setOpacity((state.layers_config[i].opacity/100).toFixed(1));
+					}
+				}else if(state.layers_config[i].url_type=="supermap-rest"){
+					state.layers_config[i].layer.setOpacity((state.layers_config[i].opacity/100).toFixed(1));
+				}
 			}
 		},
 		//重新排列图层
 		index_rightlayer_config(state){
 			for(let i=0;i<state.layers_config.length;i++){
 				state.layers_config[i].layer_index = state.layers_config.length-i;
-				state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+				if(state.layers_config[i].url_type=="vector"){
+					$("."+state.layers_config[i].id).css({
+						zIndex:state.layers_config[i].layer_index
+					})
+				}else if(state.layers_config[i].url_type=="supermap-rest"){
+					state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+				}
 			}
 		},
 		//添加图层
@@ -46,7 +59,13 @@ const rightlayer_store = {
 					state.layers_config.splice(i-1,0,state.layers_config[i]);
 					state.layers_config.splice(i+1,1);
 					for(let i=0;i<state.layers_config.length;i++){
-						state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+						if(state.layers_config[i].url_type=="vector"){
+							$("."+state.layers_config[i].id).css({
+								zIndex:state.layers_config[i].layer_index
+							})
+						}else{
+							state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+						}
 					}
 					break;
 				}
@@ -67,7 +86,13 @@ const rightlayer_store = {
 					state.layers_config.splice(i,0,state.layers_config[i+1]);
 					state.layers_config.splice(i+2,1);
 					for(let i=0;i<state.layers_config.length;i++){
-						state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+						if(state.layers_config[i].url_type=="vector"){
+							$("."+state.layers_config[i].id).css({
+								zIndex:state.layers_config[i].layer_index
+							})
+						}else{
+							state.layers_config[i].layer.setZIndex(state.layers_config[i].layer_index);
+						}
 					}
 					break;
 				}

@@ -27,6 +27,46 @@
 									<div v-else>
 										<span class="el-icon-check" @click="index_check(post)"></span>
 									</div>
+									<div v-if="post.url_type=='vector'">
+										<el-popover placement="bottom" width="300" trigger="click">
+											<div class="vector_style_parent">
+												<div class="vector_style_header">
+													<el-radio-group v-model="post.icon_radio" size="small"  @change="image_icon_check($event,post)">
+													    <el-radio-button label="矢量"></el-radio-button>
+													    <el-radio-button label="图片"></el-radio-button>
+													</el-radio-group>
+												</div>
+												<div class="vector_style_main">
+													<div class="vector_first" v-if="post.icon_radio=='矢量'">
+														<span v-for="p in vector_font" :key="p.id" :class="[{'active':p.icon_class==post.icon_class},p.icon_class]" @click="set_icon_class(post,p)"></span>
+													</div>
+													<div class="vector_first" v-else>
+														<span v-for="p in vector_images" :class="[{'active':p.icon_image==post.icon_image},p.image_class,'vector_image_class']" @click="set_icon_class(post,p)"></span>
+													</div>
+													<div class="vector_second" v-if="post.icon_radio=='矢量'">
+													  <span>点颜色：</span>
+													  <el-color-picker v-model="post.icon_color" @change="set_icon_color($event,post)"></el-color-picker>
+													</div>
+													<div class="vector_three">
+														<span>点大小：</span>
+														<el-slider v-model="post.icon_size" input-size="mini" :min="1" :max="20" @change="set_icon_size($event,post)"></el-slider>
+														<span>Px</span>
+													</div>
+												</div>
+												<!-- <div class="vector_style_main" v-else>
+													<div class="vector_first">
+														<span v-for="p in vector_images" :class="[{'active':p.icon_image==post.icon_image},p.image_class,'vector_image_class']" @click="set_icon_class(post,p)"></span>
+													</div>
+													<div class="vector_three">
+														<span>点大小：</span>
+														<el-slider v-model="post.icon_size" input-size="mini" :min="1" :max="20" @input="set_icon_size($event,post)"></el-slider>
+														<span>Px</span>
+													</div>
+												</div> -->
+											</div>
+											<span class="el-icon-edit-outline" slot="reference"></span>
+										</el-popover>
+									</div>
 									<div>
 										<span class="el-icon-top" @click="index_up(post)"></span>
 									</div>
@@ -61,6 +101,46 @@
 		name: 'rightlayercontrol',
 		data() {
 			return {
+				vector_font:[
+					{
+						id:this.myCommon.UUID(),
+						icon_class:"supermapol-icons supermapol-icons-Oval",
+					},
+					{
+						id:this.myCommon.UUID(),
+						icon_class:"supermapol-icons supermapol-icons-Triangle",
+					},
+					{
+						id:this.myCommon.UUID(),
+						icon_class:"supermapol-icons supermapol-icons-Rectangle",
+					},
+					{
+						id:this.myCommon.UUID(),
+						icon_class:"supermapol-icons supermapol-icons-Star",
+					}
+				],
+				vector_images:[
+					{
+						id:this.myCommon.UUID(),
+						image_class:"purple_image_class",
+						icon_image:"./supermap/purple.png"
+					},
+					{
+						id:this.myCommon.UUID(),
+						image_class:"blue_image_class",
+						icon_image:"./supermap/blue.png"
+					},
+					{
+						id:this.myCommon.UUID(),
+						image_class:"green_image_class",
+						icon_image:"./supermap/green.png"
+					},
+					{
+						id:this.myCommon.UUID(),
+						image_class:"red_image_class",
+						icon_image:"./supermap/red.png"
+					}
+				]
 			}
 		},
 		components: {
@@ -89,7 +169,40 @@
 			},
 		},
 		methods: {
-			//滑块移动事件
+			image_icon_check(value,post){
+				console.log("进入了切换类型函数")
+				this.myCommon.init_marker_style(post);
+			},
+			//修改图标颜色
+			set_icon_color(value,post){
+				console.log("进入了修改颜色函数")
+				if(post.icon_radio == "矢量"){
+					$("."+post.id).css({
+						"color":value
+					})
+				}
+				
+			},
+			// 修改图标大小
+			set_icon_size(value,post){
+				console.log("进入了修改图标大小函数")
+				this.myCommon.init_marker_style(post);
+				
+			},
+			//修改图标样式
+			set_icon_class(post,p){
+				console.log("进入了修改样式函数")
+				if(post.icon_radio == "矢量"){
+					$("."+post.id).removeClass(post.icon_class);
+					$("."+post.id).addClass(p.icon_class);
+					post.icon_class=p.icon_class;
+				}else if(post.icon_radio == "图片"){
+					post.icon_image=p.icon_image;
+					this.myCommon.init_marker_style(post);
+				}
+				
+			},
+			//修改图层透明度
 			rightlayer_input(value){
 				//更新图层透明度
 				this.$store.commit("update_rightlayer_opacity");
@@ -213,12 +326,10 @@
 							&>div:nth-child(1){
 								border: @common_border;
 							}
-							&>div:nth-child(2){
+							&>div:not(:first-child){
 								border-top: @common_border;
 								border-bottom:  @common_border;
-							}
-							&>div:nth-child(3){
-								border:  @common_border;
+								border-right:  @common_border;
 							}
 						}
 					}
@@ -251,5 +362,80 @@
 	.ghost {
 	    opacity: 0.5;
 	    background: #c8ebfb;
+	}
+	
+	//图标修改面板
+	.vector_style_parent{
+		@display_column_start();
+		&>.vector_style_header{
+			@display_row_start();
+			align-items: center;
+		}
+		&>.vector_style_main{
+			margin-top: 2%;
+			
+			&>.vector_first{
+				@display_row_start();
+				text-align: center;
+				&>span{
+					line-height: 40px;
+					width: 40px;
+					height: 40px;
+					font-size: 25px;
+					cursor:pointer;
+				}
+				&>span:hover{
+					background-color: rgba(0, 170, 255,0.1);
+				}
+				&>span.active{
+					background-color: rgba(0, 170, 255,0.1);
+				}
+				&>span.vector_image_class{
+					background-position: center center;
+					background-size: 25px 25px;
+					background-repeat: no-repeat;
+				}
+			}
+			&>.vector_second{
+				@display_row_between();
+				align-items: center;
+				&>div{
+					flex:1;
+					&>.el-color-picker__trigger{
+						width: 100%;
+					}
+				}
+			}
+			&>.vector_three{
+				@display_row_between();
+				align-items: center;
+				&>div{
+					flex:1;
+					&>.el-color-picker__trigger{
+						width: 100%;
+					}
+				}
+				&>span:last-child{
+					margin-left: 5%;
+					text-align: center;
+					width: 10%;
+					border: @common_border;
+				}
+			}
+		}
+		
+	}
+	//图标地址
+	.purple_image_class{
+		background-image: url(../assets/images/supermap/purple.png);
+	}
+	.blue_image_class{
+		background-image: url(../assets/images/supermap/blue.png);
+	}
+	.green_image_class{
+		background-image: url(../assets/images/supermap/green.png);
+	}
+	.red_image_class{
+		background-image: url(../assets/images/supermap/red.png);
 	}
 </style>

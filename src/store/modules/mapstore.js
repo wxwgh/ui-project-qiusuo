@@ -4,7 +4,8 @@ const map_store = {
 		// 地图模块 全局map,底图layer,底图地址
 		map:"",
 		layer:"",
-		url:"GaoDe.Normal.road"
+		url:"GaoDe.Normal.road",
+		marker_group:""
 	},
 	actions: {},
 	mutations: {
@@ -14,6 +15,9 @@ const map_store = {
 		set_layer: (state,data) => {
 			state.layer = data;
 		},
+		set_marker_group: (state,marker_group) => {
+			state.marker_group = marker_group;
+		},
 	},
 	getters: {
 		map: (state) => {
@@ -21,6 +25,9 @@ const map_store = {
 		},
 		map_url: (state) => {
 			return state.url;
+		},
+		get_marker_group: (state,data) => {
+			return state.marker_group;
 		},
 	}
 }

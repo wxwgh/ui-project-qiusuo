@@ -13,15 +13,18 @@ Vue.use(ElementUI);
 import $ from 'jquery';
 //引入leaflet
 import L from 'leaflet';
-import '@supermap/iclient-leaflet'
+import '@supermap/iclient-leaflet';
 import 'leaflet/dist/leaflet.css';
+
+//引入海量marker插件
+import './assets/plugins/leaflet.canvas-markers.js';
 
 //加载自定义脚本
 import './assets/plugins/leaflet.ChineseTmsProviders.js';
 
 //引入字体图标
 import './assets/fonts/fonts.css';
-
+import './assets/fonts/supermap/iconfont.css';
 //引入turf
 import * as turf from '@turf/turf';
 Vue.prototype.turf = turf;
@@ -39,13 +42,7 @@ import myCommon from './assets/plugins/common.js'
 Vue.prototype.myCommon = myCommon;
 
 
-Vue.prototype.$UUID = function () {
-    function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
-    }
 
-    return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4())
-}
 
 Vue.config.productionTip = false
 

@@ -2,9 +2,10 @@
 import myCommon from '../../assets/plugins/common.js';
 //引入axios
 import axios from 'axios';
+let host = "localhost:15000";
 const rightlayer_store = {
 	state: {
-		config_url:"http://localhost:15000/layertree_service/get_layertree_config",
+		config_url:"http://"+host+"/layertree_service/get_layertree_config",
 		layers_tree_config:[],
 		layer_index:0,
 	},
@@ -16,7 +17,7 @@ const rightlayer_store = {
 			    url: context.getters.get_leftlayer_url
 			}).then(function (result) {
 				console.log(result);
-				context.commit("init_layers_tree",result.data.children);
+				context.commit("init_layers_tree",result.data[0].children);
 			}).catch(function(error){
 				console.log(error);
 			})

@@ -51,17 +51,63 @@
 		},
 		methods: {
 			layer_offon(post) {
+				let $this = this;
 				let layer_group = this.$store.getters.get_layer_group;
 				let map = this.$store.getters.map;
 				if(post.show_flag){
 					//添加图层
 					this.$store.commit("update_layer_index");
 					let layer_index = this.$store.getters.get_layer_index;
-					let layer = L.supermap.tiledMapLayer(post.url,{ transparent: true, zIndex: layer_index,opacity:0.7}).addTo(map);
-					post.layer = layer;
-					post.layer_index=layer_index;
-					//添加至右侧图层样式控制器
-					this.$store.commit("add_rightlayer_config",post);
+					if(post.url_type=="supermap-rest"){
+						let layer = L.supermap.tiledMapLayer(post.url,{ transparent: true, zIndex: layer_index,opacity:1,pane:"markerPane"}).addTo(map);
+						post.layer = layer;
+						post.layer_index=layer_index;
+						//添加至右侧图层样式控制器
+						this.$store.commit("add_rightlayer_config",post);
+					}else if(post.url_type=="vector"){
+						$this.axios({
+						    method: 'get',
+						    url: post.url,
+						}).then(function (result) {
+							$this.myCommon.get_message("获取数据成功");
+							let map = $this.$store.getters.map;
+							//构建geojson
+							let geojson = {
+								type: "FeatureCollection",
+								features: []
+							}
+							for(let i=0;i<result.data.length;i++){
+								let feature = {
+									type: "Feature",
+									properties: {
+										name:result.data[i].name
+									},
+									geometry: {
+										type: "Point",
+										coordinates: [result.data[i].lng,result.data[i].lat]
+									},
+								};
+								geojson.features.push(feature);
+							}
+							//叠加至地图
+							let layer = L.geoJSON(geojson, {
+								pointToLayer:function(geoJsonPoint,latlng){
+									//构建marker
+									let marker = $this.myCommon.get_markers(post,latlng);
+									return marker;
+								},
+							}).addTo(map);
+							post.layer_index=layer_index;
+							post.layer = layer;							//初始化marker样式
+							$this.myCommon.init_marker_style(post);
+							//添加至右侧图层样式控制器
+							$this.$store.commit("add_rightlayer_config",post);
+						}).catch(function(error){
+							console.log(error)
+							$this.myCommon.get_message("获取数据失败");
+						})
+					}
+					
 				}else{
 					//删除图层
 					this.$store.commit("delete_rightlayer_config",post);
@@ -116,6 +162,7 @@
 	// 图层树样式
 	.el-tree-node__content{
 		height: 45px!important;
+		border-bottom: 1px solid #ccc;
 	}
 	.custom-tree-node{
 		flex: 1;

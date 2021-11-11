@@ -8,6 +8,9 @@
 		<rightlayercontrol></rightlayercontrol>
 		<!-- 右侧工具栏模块 -->
 		<righttool></righttool>
+		<div class="mylogo">
+			<span>地震数据一张图</span>
+		</div>
 	</div>
 </template>
 <script>
@@ -41,6 +44,8 @@
 	};
 </script>
 <style lang="less">
+	//引入全局样式
+	@import "./assets/less/style.less";
 	/* 初始化环境 */
 	html,
 	body {
@@ -55,8 +60,6 @@
 		font-family:'PingFang';
 		white-space:nowrap;
 	}
-	@font-face{font-family:'PingFang';src:url('./assets/fonts/PingFang.ttf') format('truetype');font-weight:normal;font-style:normal;}
-	@font-face{font-family:'DS-Digital';src:url('./assets/fonts/DS-DIGIB.ttf') format('truetype');font-weight:normal;font-style:normal;}
 	body {
 		margin: 0;
 		padding: 0;
@@ -146,5 +149,23 @@
 		height: 100%;
 		width: 100%;
 		position:relative;
+	}
+	.mylogo{
+		position: absolute;
+		left:1%;
+		top:1%;
+		height:45;
+		width:300px;
+		text-align: center;
+		z-index:2;
+		line-height: 45px;
+		background:@common_color;
+		border-radius: 2px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, 0.04);
+		&>span{
+			font-size: 28px;
+			font-weight: bold;
+			color:#fff;
+		}
 	}
 </style>
